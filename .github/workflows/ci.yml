@@ -16,8 +16,3 @@ jobs:
           node-version: '16.17.0'
       - name: jest
         uses: ./.github/actions/jest
-
-      - name: Install Dependencies
-        run: npm install
-      - name: Run test
-        run: npm test
