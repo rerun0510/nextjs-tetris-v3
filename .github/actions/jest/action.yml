@@ -5,6 +5,8 @@ runs:
   steps:
     - name: Install dependencies 👨🏻‍💻
       run: npm install
+      shell: bash
 
     - name: Run tests 🧪
       run: npm test
+      shell: bash
