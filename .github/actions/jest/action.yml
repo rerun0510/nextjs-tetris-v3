@@ -1,0 +1,10 @@
+name: jest
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install dependencies 👨🏻‍💻
+      run: npm install
+
+    - name: Run tests 🧪
+      run: npm test

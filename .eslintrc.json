@@ -17,12 +17,15 @@
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "prettier"
+    "prettier",
+    "plugin:jest/recommended",
+    "plugin:jest/style"
   ],
   "plugins": [
     "@typescript-eslint",
     "react",
-    "unused-imports"
+    "unused-imports",
+    "jest"
   ],
   "rules": {
     "react/react-in-jsx-scope": "off",
@@ -87,6 +90,9 @@
     // 最後のimportの後に空行を追加
     "import/newline-after-import": "error",
     // 不要なimportの削除
-    "unused-imports/no-unused-imports": "error"
+    "unused-imports/no-unused-imports": "error",
+    // Jest
+    "jest/consistent-test-it": ["error", { "fn": "it" }],
+    "jest/require-top-level-describe": ["error"]
   }
 }
