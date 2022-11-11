@@ -1,3 +1,5 @@
+import { CurrentMino } from '../types/currentMino'
+
 /** 操作可能なフィールドの幅 */
 export const OPERABLE_FIELD_WIDTH = 10
 
@@ -32,3 +34,11 @@ export const MINO_INIT_POSITION_X = FIELD_WALL_THICKNESS + 3
 
 /** 操作対象となるミノの初期位置(Y軸) */
 export const MINO_INIT_POSITION_Y = 0
+
+/** 操作中のミノの初期状態設定用テンプレート */
+export const CURRENT_MINO_TEMPLATE: CurrentMino = {
+  pointX: MINO_INIT_POSITION_X,
+  pointY: MINO_INIT_POSITION_Y,
+  mino: 'none',
+  deg: 0,
+}

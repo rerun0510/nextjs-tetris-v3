@@ -1,13 +1,8 @@
 import _ from 'lodash'
 
 import {
-  FIELD_HEIGHT,
-  FIELD_WALL_THICKNESS,
-  FIELD_WIDTH,
-  MINO_INIT_POSITION_X,
+  CURRENT_MINO_TEMPLATE,
   MINO_INIT_POSITION_Y,
-  OPERABLE_FIELD_HEIGHT,
-  OPERABLE_FIELD_WIDTH,
 } from './constants'
 import { Mino, minos } from './enums'
 import {
@@ -17,40 +12,7 @@ import {
   TetrisGameState,
 } from './types'
 import { CurrentMino } from './types/currentMino'
-import { shuffleArray } from './utils'
-
-/** 空のセルを生成 */
-const createEmptyCells = (): Cell[][] =>
-  Array.from({ length: FIELD_HEIGHT }, (_, i): Cell[] =>
-    Array.from({ length: FIELD_WIDTH }, (_, j): Cell => {
-      const isWall = !(
-        i < OPERABLE_FIELD_HEIGHT + FIELD_WALL_THICKNESS &&
-        FIELD_WALL_THICKNESS <= j &&
-        j < OPERABLE_FIELD_WIDTH + FIELD_WALL_THICKNESS
-      )
-      return {
-        color: isWall ? 'gray' : '',
-        isFixed: isWall,
-        isCurrent: false,
-        isGhost: false,
-      }
-    })
-  )
-
-/** ７種類のミノから並び順がランダムな配列を作成 */
-const createNextMinos = (): Mino[] => [
-  ...shuffleArray(
-    Object.keys(minos).filter((v) => v !== 'none')
-  ),
-]
-
-/** 操作中のミノの初期状態設定用テンプレート */
-const CURRENT_MINO_TEMPLATE: CurrentMino = {
-  pointX: MINO_INIT_POSITION_X,
-  pointY: MINO_INIT_POSITION_Y,
-  mino: 'none',
-  deg: 0,
-}
+import { createEmptyCells, createNextMinos } from './utils'
 
 export class Tetris {
   /** ループの回数を管理する */
@@ -77,6 +39,7 @@ export class Tetris {
       mino: this.popNextMino(),
     }
   }
+
   get gameState(): TetrisGameState {
     return this._gameState
   }
@@ -86,7 +49,6 @@ export class Tetris {
    * @param action 操作内容
    */
   mainLoop(action?: Action): void {
-    console.log(this._fixedCells)
     if (this._count % 10 === 0) {
       // TODO: 着地判定
       // 落下処理
@@ -122,7 +84,7 @@ export class Tetris {
    * ゲームの操作を行う
    * @param action 操作内容
    */
-  action(action?: Action) {
+  private action(action?: Action) {
     switch (action) {
       case 'right':
       case 'left':
@@ -137,7 +99,7 @@ export class Tetris {
    * ミノの水平移動
    * @param action 移動方向
    */
-  actionHorizontal(action: ActionHorizontal) {
+  private actionHorizontal(action: ActionHorizontal) {
     const { pointX, pointY, mino, deg } = this._currentMino
     const point = minos[mino].points[deg]
     // 壁・固定されたミノとの衝突判定

@@ -1,1 +1,3 @@
-export { shuffleArray } from './shuffleArray'
+export * from './createNextMinos'
+export * from './createEmptyCells'
+export * from './shuffleArray'
