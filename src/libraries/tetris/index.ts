@@ -51,7 +51,6 @@ export class Tetris {
    */
   mainLoop(action?: Action): void {
     if (this._count % 10 === 0) {
-      // TODO: 着地判定
       // 落下処理
       this.drop()
     } else {
@@ -64,19 +63,41 @@ export class Tetris {
 
   /**
    * 操作中のミノの落下処理
+   *
+   * 落下完了の場合はミノを固定化し、新しいミノを排出する
    */
   private drop(): void {
-    // TODO: 着地判定を実装したら修正する
-    if (this._currentMino.pointY === 22) {
+    // 操作中のミノが落下完了するまでの最短距離を算出
+    const distance = this.calculateDistance()
+    if (distance) {
+      // 通常の落下
+      this._currentMino = {
+        ...this._currentMino,
+        pointY: this._currentMino.pointY + 1,
+      }
+    } else {
+      // ミノの固定化
+      const { pointX, pointY, mino, deg } =
+        this._currentMino
+      const { points, color } = minos[mino]
+      const point = points[deg]
+      for (let i = 0; i < point.length; i++) {
+        for (let j = 0; j < point[i].length; j++) {
+          if (point[i][j]) {
+            this._fixedCells[i + pointY][j + pointX] = {
+              color,
+              isFixed: true,
+              isCurrent: false,
+              isGhost: false,
+            }
+          }
+        }
+      }
+      // 新しいミノを排出
       this._currentMino = {
         ...CURRENT_MINO_TEMPLATE,
         mino: this.popNextMino(),
         pointY: MINO_INIT_POSITION_Y,
-      }
-    } else {
-      this._currentMino = {
-        ...this._currentMino,
-        pointY: this._currentMino.pointY + 1,
       }
     }
   }
@@ -149,7 +170,7 @@ export class Tetris {
       }
     }
 
-    // 操作中のミノが衝突するまでの最短距離を算出
+    // 操作中のミノが落下完了するまでの最短距離を算出
     const distance = this.calculateDistance()
     // 操作中のミノの落下予定地を設定
     if (distance) {
