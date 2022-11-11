@@ -1,8 +1,9 @@
-import { useCounter } from '@/hooks'
-import { Counter } from '@/libraries/counter'
-import { ICounter } from '@/libraries/counter/interfaces'
 import { renderHook } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
+
+import { ICounter } from '@/libraries/counter/interfaces'
+
+import { useCounter } from '@/hooks'
 
 /**
  * 今回のCounterの場合はMock化する必要性はないが、

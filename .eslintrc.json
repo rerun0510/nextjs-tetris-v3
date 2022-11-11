@@ -17,19 +17,14 @@
     "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "prettier",
-    "plugin:jest/recommended",
-    "plugin:jest/style"
+    "prettier"
   ],
   "plugins": [
     "@typescript-eslint",
     "react",
-    "unused-imports",
-    "jest"
+    "unused-imports"
   ],
   "rules": {
-    "react/react-in-jsx-scope": "off",
-    "react/prop-types": "off",
     "import/order": [
       "error",
       {
@@ -42,47 +37,38 @@
           "type",
           "index"
         ],
-        "pathGroups": [
-          {
-            "pattern": "react",
-            "group": "external",
-            "position": "before"
-          },
-          {
-            "pattern": "next/**",
-            "group": "external",
-            "position": "before"
-          },
-          {
-            "pattern": "API",
-            "group": "internal",
-            "position": "before"
-          },
-          {
-            "pattern": "graphql/**",
-            "group": "internal",
-            "position": "before"
-          },
-          {
-            "pattern": "ui-components/**",
-            "group": "index",
-            "position": "after"
-          },
-          {
-            "pattern": "**\\.css",
-            "group": "index",
-            "position": "after"
-          }
-        ],
-        "pathGroupsExcludedImportTypes": [
-          "react",
-          "next/**"
-        ],
         "newlines-between": "always",
+        "pathGroupsExcludedImportTypes": ["builtin"],
         "alphabetize": {
           "order": "asc",
-          "caseInsensitive": false
-        }
+          "caseInsensitive": true
+        },
+        "pathGroups": [
+          // ここに書いた順序で間に1行空行をあけつつ整頓される
+          {
+            "pattern": "@/components/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "@/hooks/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "@/libraries/**",
+            "group": "internal",
+            "position": "before"
+          },
+
+          // styles
+          // 最後尾にしたいのでgroupをindex扱いにする
+          {
+            "pattern": "./**.module.css",
+            "group": "index",
+            "position": "before"
+          }
+        ]
       }
     ],
     // importをファイル先頭に記述
@@ -91,8 +77,7 @@
     "import/newline-after-import": "error",
     // 不要なimportの削除
     "unused-imports/no-unused-imports": "error",
-    // Jest
-    "jest/consistent-test-it": ["error", { "fn": "it" }],
-    "jest/require-top-level-describe": ["error"]
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off"
   }
 }

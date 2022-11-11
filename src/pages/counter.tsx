@@ -1,5 +1,3 @@
-import { useRouter } from 'next/router'
-
 import {
   Button,
   Text,
@@ -7,8 +5,10 @@ import {
   VStack,
   HStack,
 } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
 
 import { useCounter as _useCounter } from '@/hooks/useCounter'
+
 import { Counter } from '@/libraries/counter'
 
 // DIに関する参考記事
