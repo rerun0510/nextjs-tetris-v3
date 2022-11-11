@@ -1,3 +1,6 @@
 import { ActionHorizontal } from '.'
 
-export type Action = ActionHorizontal
+export type Action =
+  | ActionHorizontal
+  | 'hardDrop'
+  | 'softDrop'

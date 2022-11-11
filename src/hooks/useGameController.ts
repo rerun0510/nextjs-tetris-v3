@@ -18,7 +18,8 @@ export const useGameController = () => {
   useKey('ArrowLeft', () => setAction('left'))
   useKey('ArrowRight', () => setAction('right'))
   useKey('ArrowUp', () => setAction(undefined))
-  useKey('ArrowDown', () => setAction(undefined))
+  useKey('ArrowDown', () => setAction('softDrop'))
+  useKey(' ', () => setAction('hardDrop'))
 
   // テトリスのメインループ処理を実行
   const mainLoop = useCallback(() => {
