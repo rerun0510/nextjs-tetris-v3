@@ -1,3 +1,5 @@
+export * from './action'
+export * from './actionHorizontal'
 export * from './cell'
 export * from './deg'
 export * from './minoPoints'

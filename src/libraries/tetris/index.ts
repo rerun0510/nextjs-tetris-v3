@@ -6,9 +6,16 @@ import {
   FIELD_WIDTH,
   MINO_INIT_POSITION_X,
   MINO_INIT_POSITION_Y,
+  OPERABLE_FIELD_HEIGHT,
+  OPERABLE_FIELD_WIDTH,
 } from './constants'
 import { Mino, minos } from './enums'
-import { Cell, TetrisGameState } from './types'
+import {
+  Action,
+  ActionHorizontal,
+  Cell,
+  TetrisGameState,
+} from './types'
 import { CurrentMino } from './types/currentMino'
 import { shuffleArray } from './utils'
 
@@ -17,12 +24,13 @@ const createEmptyCells = (): Cell[][] =>
   Array.from({ length: FIELD_HEIGHT }, (_, i): Cell[] =>
     Array.from({ length: FIELD_WIDTH }, (_, j): Cell => {
       const isWall = !(
-        i < FIELD_HEIGHT + FIELD_WALL_THICKNESS &&
+        i < OPERABLE_FIELD_HEIGHT + FIELD_WALL_THICKNESS &&
         FIELD_WALL_THICKNESS <= j &&
-        j < FIELD_WIDTH + FIELD_WALL_THICKNESS
+        j < OPERABLE_FIELD_WIDTH + FIELD_WALL_THICKNESS
       )
       return {
         color: isWall ? 'gray' : '',
+        isFixed: isWall,
         isCurrent: false,
         isGhost: false,
       }
@@ -75,17 +83,16 @@ export class Tetris {
 
   /**
    * テトリスのメインループ処理
-   * @param key キー情報
+   * @param action 操作内容
    */
-  mainLoop(key: string): void {
+  mainLoop(action?: Action): void {
+    console.log(this._fixedCells)
     if (this._count % 10 === 0) {
       // TODO: 着地判定
       // 落下処理
       this.drop()
     } else {
-      if (key) {
-        console.log(key)
-      }
+      this.action(action)
     }
     // セルを更新
     this.updateCells()
@@ -112,6 +119,50 @@ export class Tetris {
   }
 
   /**
+   * ゲームの操作を行う
+   * @param action 操作内容
+   */
+  action(action?: Action) {
+    switch (action) {
+      case 'right':
+      case 'left':
+        this.actionHorizontal(action)
+        break
+      default:
+        break
+    }
+  }
+
+  /**
+   * ミノの水平移動
+   * @param action 移動方向
+   */
+  actionHorizontal(action: ActionHorizontal) {
+    const { pointX, pointY, mino, deg } = this._currentMino
+    const point = minos[mino].points[deg]
+    // 壁・固定されたミノとの衝突判定
+    for (let i = 0; i < point.length; i++) {
+      for (let j = 0; j < point[i].length; j++) {
+        if (
+          point[i][j] &&
+          this._fixedCells[i + pointY][
+            j + pointX + (action === 'right' ? 1 : -1)
+          ].isFixed
+        ) {
+          return
+        }
+      }
+    }
+    // 左右に1セル分移動
+    this._currentMino = {
+      ...this._currentMino,
+      pointX:
+        this._currentMino.pointX +
+        (action === 'right' ? 1 : -1),
+    }
+  }
+
+  /**
    * セルを最新の状態に更新する
    */
   private updateCells(): void {
@@ -127,6 +178,7 @@ export class Tetris {
           // 操作中のミノを配置
           newCells[i + pointY][j + pointX] = {
             color,
+            isFixed: false,
             isCurrent: true,
             isGhost: false,
           }

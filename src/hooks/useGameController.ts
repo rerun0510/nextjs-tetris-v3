@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { useKey } from 'react-use'
 
+import { Action } from '@/libraries/tetris/types'
+
 import { Tetris } from '@/libraries'
 
 import { useInterval } from './useInterval'
@@ -10,26 +12,26 @@ export const useGameController = () => {
   const [gameState, setGameState] = useState(
     tetris.gameState
   )
-  const [key, setKey] = useState('')
+  const [action, setAction] = useState<Action>()
 
   // キーボードイベントの取得
-  useKey('ArrowLeft', (e) => setKey(e.key))
-  useKey('ArrowRight', (e) => setKey(e.key))
-  useKey('ArrowUp', (e) => setKey(e.key))
-  useKey('ArrowDown', (e) => setKey(e.key))
+  useKey('ArrowLeft', () => setAction('left'))
+  useKey('ArrowRight', () => setAction('right'))
+  useKey('ArrowUp', () => setAction(undefined))
+  useKey('ArrowDown', () => setAction(undefined))
 
   // テトリスのメインループ処理を実行
   const mainLoop = useCallback(() => {
-    tetris.mainLoop(key)
+    tetris.mainLoop(action)
     // キーボードイベンドのリセット
-    setKey('')
+    setAction(undefined)
     setGameState(tetris.gameState)
-  }, [key])
+  }, [action])
 
   //   一定間隔でmainLoopを実行
   useInterval({
     onUpdate: mainLoop,
   })
 
-  return { gameState, setKey }
+  return { gameState, setAction }
 }
