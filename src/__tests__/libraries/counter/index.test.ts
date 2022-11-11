@@ -1,17 +1,23 @@
 import { Counter } from '@/libraries/counter'
 
-describe('libraries/Counter', () => {
+describe('Counter', () => {
   const counter = new Counter()
 
+  describe('#initialize', () => {
+    it('should initialize counter', () => {
+      expect(counter.count).toBe(0)
+    })
+  })
+
   describe('#increment', () => {
-    it('count must be increment', () => {
+    it('should increment counter', () => {
       counter.increment()
       expect(counter.count).toEqual(1)
     })
   })
 
   describe('#reset', () => {
-    it('count must be reset', () => {
+    it('should reset counter', () => {
       counter.reset()
       expect(counter.count).toEqual(0)
     })
