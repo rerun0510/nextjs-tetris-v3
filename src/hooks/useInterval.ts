@@ -8,7 +8,7 @@ export const useInterval = ({ onUpdate }: Params) => {
   useEffect(() => {
     const timerId = setInterval(() => {
       onUpdate()
-    }, 50)
+    }, 1)
     return () => clearInterval(timerId)
   })
 }

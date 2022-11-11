@@ -9,6 +9,7 @@ import { Mino, minos } from './enums'
 import {
   Action,
   ActionHorizontal,
+  ActionRotate,
   Cell,
   TetrisGameState,
 } from './types'
@@ -50,7 +51,7 @@ export class Tetris {
    * @param action 操作内容
    */
   mainLoop(action?: Action): void {
-    if (this._count % 10 === 0) {
+    if (this._count % 120 === 0) {
       // 操作中のミノが落下完了するまでの最短距離を算出
       const distance = this.calculateDistance()
       if (distance) {
@@ -115,6 +116,10 @@ export class Tetris {
       case 'left':
         this.actionHorizontal(action)
         break
+      case 'rotate90CW':
+      case 'rotate90CCW':
+        this.actionRotate90(action)
+        break
       case 'hardDrop':
         this.actionHardDrop()
         break
@@ -152,6 +157,45 @@ export class Tetris {
       pointX:
         this._currentMino.pointX +
         (action === 'right' ? 1 : -1),
+    }
+  }
+
+  /** 時計回り・反時計回り */
+  actionRotate90(action: ActionRotate) {
+    const { pointX, pointY, mino, deg } = this._currentMino
+    const { points } = minos[mino]
+    // 回転後の角度を算出
+    // TODO: いい感じのロジックに変えたい
+    let newDeg = deg
+    switch (newDeg) {
+      case 0:
+        newDeg = action === 'rotate90CW' ? 90 : 270
+        break
+      case 90:
+        newDeg = action === 'rotate90CW' ? 180 : 0
+        break
+      case 180:
+        newDeg = action === 'rotate90CW' ? 270 : 90
+        break
+      case 270:
+        newDeg = action === 'rotate90CW' ? 0 : 180
+        break
+    }
+    // 回転後の状態を確認
+    const point = points[newDeg]
+    for (let i = 0; i < point.length; i++) {
+      for (let j = 0; j < point[i].length; j++) {
+        if (
+          point[i][j] &&
+          this._fixedCells[i + pointY][j + pointX].isFixed
+        ) {
+          return
+        }
+      }
+    }
+    this._currentMino = {
+      ...this._currentMino,
+      deg: newDeg,
     }
   }
 

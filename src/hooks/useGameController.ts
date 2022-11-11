@@ -17,9 +17,11 @@ export const useGameController = () => {
   // キーボードイベントの取得
   useKey('ArrowLeft', () => setAction('left'))
   useKey('ArrowRight', () => setAction('right'))
-  useKey('ArrowUp', () => setAction(undefined))
+  useKey('ArrowUp', () => setAction('rotate90CW'))
   useKey('ArrowDown', () => setAction('softDrop'))
   useKey(' ', () => setAction('hardDrop'))
+  useKey('z', () => setAction('rotate90CCW'))
+  useKey('x', () => setAction('rotate90CW'))
 
   // テトリスのメインループ処理を実行
   const mainLoop = useCallback(() => {
