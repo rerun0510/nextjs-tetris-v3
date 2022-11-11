@@ -2,6 +2,7 @@ import _ from 'lodash'
 
 import {
   CURRENT_MINO_TEMPLATE,
+  FIELD_HEIGHT,
   MINO_INIT_POSITION_Y,
 } from './constants'
 import { Mino, minos } from './enums'
@@ -131,7 +132,7 @@ export class Tetris {
     const { pointX, pointY, mino, deg } = this._currentMino
     const { points, color } = minos[mino]
     const point = points[deg]
-    const newCells = _.cloneDeep(createEmptyCells())
+    const newCells = _.cloneDeep(this._fixedCells)
 
     // 操作中のミノを配置
     for (let i = 0; i < point.length; i++) {
@@ -143,6 +144,28 @@ export class Tetris {
             isFixed: false,
             isCurrent: true,
             isGhost: false,
+          }
+        }
+      }
+    }
+
+    // 操作中のミノが衝突するまでの最短距離を算出
+    const distance = this.calculateDistance()
+    // 操作中のミノの落下予定地を設定
+    if (distance) {
+      for (let i = 0; i < point.length; i++) {
+        for (let j = 0; j < point[i].length; j++) {
+          if (
+            point[i][j] &&
+            !newCells[distance + i + pointY][j + pointX]
+              .isCurrent
+          ) {
+            newCells[distance + i + pointY][j + pointX] = {
+              color,
+              isFixed: false,
+              isCurrent: false,
+              isGhost: true,
+            }
           }
         }
       }
@@ -178,5 +201,36 @@ export class Tetris {
       nextMinos: _.cloneDeep(newNextMinos),
     }
     return nextMino
+  }
+
+  /**
+   * 操作中のミノが落下完了するまでの距離を計算する
+   * @returns 落下完了までのセル数
+   */
+  calculateDistance(): number {
+    const { pointX, pointY, mino, deg } = this._currentMino
+    const { points } = minos[mino]
+    const point = points[deg]
+    // 操作中のミノが衝突するまでの最短距離を算出
+    let distance = FIELD_HEIGHT
+    for (let i = 0; i < point.length; i++) {
+      for (let j = 0; j < point[i].length; j++) {
+        if (point[i][j]) {
+          for (
+            let k = i + pointY + 1;
+            k < this._fixedCells.length;
+            k++
+          ) {
+            if (this._fixedCells[k][j + pointX].isFixed) {
+              distance =
+                distance > k - (i + pointY) - 1
+                  ? k - (i + pointY) - 1
+                  : distance
+            }
+          }
+        }
+      }
+    }
+    return distance
   }
 }
