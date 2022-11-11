@@ -4,6 +4,7 @@ export class Counter implements ICounter {
   private _count: number
 
   constructor() {
+    console.log('init Counter')
     this._count = 0
   }
 
