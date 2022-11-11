@@ -7,7 +7,9 @@ import { useInterval } from './useInterval'
 
 const tetris = new Tetris()
 export const useGameController = () => {
-  const [count, setCount] = useState(0)
+  const [gameState, setGameState] = useState(
+    tetris.gameState
+  )
   const [key, setKey] = useState('')
 
   // キーボードイベントの取得
@@ -18,10 +20,10 @@ export const useGameController = () => {
 
   // テトリスのメインループ処理を実行
   const mainLoop = useCallback(() => {
-    const count = tetris.mainLoop(key)
+    tetris.mainLoop(key)
     // キーボードイベンドのリセット
     setKey('')
-    setCount(count)
+    setGameState(tetris.gameState)
   }, [key])
 
   //   一定間隔でmainLoopを実行
@@ -29,5 +31,5 @@ export const useGameController = () => {
     onUpdate: mainLoop,
   })
 
-  return { count, key }
+  return { gameState, setKey }
 }

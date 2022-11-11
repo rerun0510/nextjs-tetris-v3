@@ -1,16 +1,17 @@
-import { Box, Button, Center, Text } from '@chakra-ui/react'
+import { Box, Button, Center } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+
+import { Field } from '@/components/field'
 
 import { useGameController } from '@/hooks'
 
 export default function Home() {
   const router = useRouter()
-  const { count, key } = useGameController()
+  const { gameState } = useGameController()
   return (
     <Center h="100vh">
       <Box textAlign="center">
-        <Text>{key}</Text>
-        <Text>{count}</Text>
+        <Field cells={gameState.cells} />
         <Button onClick={() => router.push('/counter')}>
           CounterPage
         </Button>
