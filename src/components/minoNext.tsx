@@ -1,6 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react'
 import { FC, memo } from 'react'
 
+import { MINO_POINTS_NEXT } from '@/libraries/tetris/constants'
 import { Mino, minos } from '@/libraries/tetris/enums'
 
 import { MinoSquare } from './minoSquare'
@@ -11,8 +12,8 @@ type Props = { mino: Mino }
 export const MinoNext: FC<Props> = memo(function MinoNext({
   mino,
 }: Props) {
-  const { color, points } = minos[mino]
-  const point = points[0]
+  const { color } = minos[mino]
+  const point = MINO_POINTS_NEXT[mino].point
 
   return (
     <Box>
