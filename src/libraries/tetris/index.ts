@@ -38,6 +38,7 @@ export class Tetris {
     this._gameState = {
       cells: _.cloneDeep(createEmptyCells()),
       nextMinos: _.cloneDeep(createNextMinos()),
+      holdMino: 'none',
       lineCount: 0,
       level: 1,
     }
@@ -133,6 +134,9 @@ export class Tetris {
         break
       case 'softDrop':
         this.actionSoftDrop()
+        break
+      case 'hold':
+        this.actionHold()
         break
       default:
         break
@@ -232,6 +236,25 @@ export class Tetris {
         ...this._currentMino,
         pointY: this._currentMino.pointY + 1,
       }
+    }
+  }
+
+  /**
+   * ホールド
+   */
+  private actionHold() {
+    if (this._currentMino.canHold) {
+      const holdMino = this._currentMino.mino
+      // 次のミノの落下開始
+      this._currentMino = {
+        ...CURRENT_MINO_TEMPLATE,
+        mino:
+          this._gameState.holdMino === 'none'
+            ? this.popNextMino()
+            : this._gameState.holdMino,
+        canHold: false,
+      }
+      this._gameState.holdMino = holdMino
     }
   }
 

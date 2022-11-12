@@ -7,4 +7,5 @@ export type CurrentMino = {
   pointY: number
   mino: Mino
   deg: Deg
+  canHold: boolean
 }

@@ -19,6 +19,7 @@ export const useGameController = () => {
   useKey('ArrowRight', () => setAction('right'))
   useKey('ArrowUp', () => setAction('rotate90CW'))
   useKey('ArrowDown', () => setAction('softDrop'))
+  useKey('Shift', () => setAction('hold'))
   useKey(' ', () => setAction('hardDrop'))
   useKey('z', () => setAction('rotate90CCW'))
   useKey('x', () => setAction('rotate90CW'))

@@ -5,3 +5,4 @@ export type Action =
   | ActionRotate
   | 'hardDrop'
   | 'softDrop'
+  | 'hold'

@@ -41,4 +41,5 @@ export const CURRENT_MINO_TEMPLATE: CurrentMino = {
   pointY: MINO_INIT_POSITION_Y,
   mino: 'none',
   deg: 0,
+  canHold: true,
 }

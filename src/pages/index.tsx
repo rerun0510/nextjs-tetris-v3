@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import { Field } from '@/components/field'
+import { MinoHold } from '@/components/minoHold'
 import { MinoList } from '@/components/minoList'
 import { ScoreBoard } from '@/components/scoreBoard'
 
@@ -25,6 +26,7 @@ export default function Home() {
     <Center h="100vh">
       <Box textAlign="center">
         <Flex>
+          <MinoHold holdMino={gameState.holdMino} />
           <Field cells={gameState.cells} />
           <Flex flexDir="column" align="center">
             <MinoList nextMinos={gameState.nextMinos} />
