@@ -3,7 +3,10 @@ import _ from 'lodash'
 import {
   CURRENT_MINO_TEMPLATE,
   FIELD_HEIGHT,
+  FIELD_WALL_THICKNESS,
+  FIELD_WIDTH,
   MINO_INIT_POSITION_Y,
+  OPERABLE_FIELD_WIDTH,
 } from './constants'
 import { Mino, minos } from './enums'
 import {
@@ -35,6 +38,8 @@ export class Tetris {
     this._gameState = {
       cells: _.cloneDeep(createEmptyCells()),
       nextMinos: _.cloneDeep(createNextMinos()),
+      lineCount: 0,
+      level: 1,
     }
     this._currentMino = {
       ...CURRENT_MINO_TEMPLATE,
@@ -64,8 +69,11 @@ export class Tetris {
     } else {
       this.action(action)
     }
+    // セルの削除
+    this.deleteCells()
     // セルを更新
     this.updateCells()
+
     this._count++
   }
 
@@ -161,7 +169,7 @@ export class Tetris {
   }
 
   /** 時計回り・反時計回り */
-  actionRotate90(action: ActionRotate) {
+  private actionRotate90(action: ActionRotate) {
     const { pointX, pointY, mino, deg } = this._currentMino
     const { points } = minos[mino]
     // 回転後の角度を算出
@@ -334,5 +342,73 @@ export class Tetris {
       }
     }
     return distance
+  }
+
+  /**
+   * 削除対象となる列を算出する
+   * @returns 削除対象となる列(Y軸)
+   */
+  private calculateDeleteCells(): number[] {
+    const deleteIndex: number[] = []
+    for (
+      let i = FIELD_WALL_THICKNESS;
+      i < FIELD_HEIGHT - FIELD_WALL_THICKNESS;
+      i++
+    ) {
+      let minoCount = 0
+      for (
+        let j = FIELD_WALL_THICKNESS;
+        j < FIELD_WIDTH - FIELD_WALL_THICKNESS;
+        j++
+      ) {
+        minoCount += this._fixedCells[i][j].isFixed ? 1 : 0
+      }
+      if (OPERABLE_FIELD_WIDTH === minoCount) {
+        deleteIndex.push(i)
+      }
+    }
+    return deleteIndex
+  }
+
+  /**
+   *  列を削除する
+   */
+  private deleteCells(): void {
+    const newFixedCells = _.cloneDeep(this._fixedCells)
+    const deleteIndex = _.cloneDeep(
+      this.calculateDeleteCells()
+    )
+    // セルの削除・追加
+    if (deleteIndex.length) {
+      for (let i = 0; i < deleteIndex.length; i++) {
+        // セルの削除
+        newFixedCells.splice(deleteIndex[i], 1)
+        // 先頭に空のセルを追加
+        newFixedCells.splice(
+          FIELD_WALL_THICKNESS,
+          0,
+          Array.from({ length: FIELD_WIDTH }, (_, i) => {
+            const isWall = !(
+              FIELD_WALL_THICKNESS <= i &&
+              i <
+                OPERABLE_FIELD_WIDTH + FIELD_WALL_THICKNESS
+            )
+            return {
+              color: isWall ? 'gray' : '',
+              isFixed: isWall,
+              isCurrent: false,
+              isGhost: false,
+            }
+          })
+        )
+      }
+      // 固定されたセルの更新
+      this._fixedCells = newFixedCells
+      // 削除した列の数を更新
+      this._gameState.lineCount += deleteIndex.length
+      // レベルの更新
+      this._gameState.level =
+        Math.floor(this._gameState.lineCount / 5) + 1
+    }
   }
 }

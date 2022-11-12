@@ -10,4 +10,8 @@ export type TetrisGameState = {
   cells: Cell[][]
   /** 落下予定のミノを管理する配列 */
   nextMinos: Mino[]
+  /** 削除した列の数 */
+  lineCount: number
+  /** ゲームのレベル */
+  level: number
 }
