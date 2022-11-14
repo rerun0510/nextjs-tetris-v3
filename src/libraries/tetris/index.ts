@@ -108,7 +108,6 @@ export class Tetris {
       mino: this.popNextMino(),
     }
     this._count = 0
-    /** 固定されたミノの配置を表す多次元配列 */
     this._fixedCells = _.cloneDeep(createEmptyCells())
   }
 
