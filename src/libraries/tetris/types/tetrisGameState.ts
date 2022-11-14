@@ -1,6 +1,6 @@
 import { Mino } from '../enums'
 
-import { Cell } from '.'
+import { Action, Cell } from '.'
 
 /**
  * ゲーム状態を管理するモデル
@@ -18,4 +18,6 @@ export type TetrisGameState = {
   level: number
   /** ゲームオーバー */
   isGameOver: boolean
+  /** 操作内容 */
+  action?: Action
 }

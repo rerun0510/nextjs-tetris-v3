@@ -1,7 +1,5 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { useKey } from 'react-use'
-
-import { Action } from '@/libraries/tetris/types'
 
 import { Tetris } from '@/libraries'
 
@@ -12,19 +10,16 @@ export const useGameController = () => {
   const [gameState, setGameState] = useState(
     tetris.gameState
   )
-  const [action, setAction] = useState<Action>()
   const [isActive, setIsActive] = useState(false)
 
   // テトリスのメインループ処理を実行
-  const mainLoop = useCallback(() => {
+  const mainLoop = () => {
     if (!isActive) {
       return
     }
-    tetris.mainLoop(action)
-    // キーボードイベンドのリセット
-    setAction(undefined)
+    tetris.mainLoop()
     setGameState(tetris.gameState)
-  }, [action, isActive])
+  }
 
   //   一定間隔でmainLoopを実行
   useInterval({
@@ -40,18 +35,18 @@ export const useGameController = () => {
     } else {
       setIsActive(!isActive)
     }
-    setAction(undefined)
+    tetris.setAction(undefined)
   }
 
   // キーボードイベントの取得
-  useKey('ArrowLeft', () => setAction('left'))
-  useKey('ArrowRight', () => setAction('right'))
-  useKey('ArrowUp', () => setAction('rotate90CW'))
-  useKey('ArrowDown', () => setAction('softDrop'))
-  useKey('Shift', () => setAction('hold'))
-  useKey(' ', () => setAction('hardDrop'))
-  useKey('z', () => setAction('rotate90CCW'))
-  useKey('x', () => setAction('rotate90CW'))
+  useKey('ArrowLeft', () => tetris.setAction('left'))
+  useKey('ArrowRight', () => tetris.setAction('right'))
+  useKey('ArrowUp', () => tetris.setAction('rotate90CW'))
+  useKey('ArrowDown', () => tetris.setAction('softDrop'))
+  useKey('Shift', () => tetris.setAction('hold'))
+  useKey(' ', () => tetris.setAction('hardDrop'))
+  useKey('z', () => tetris.setAction('rotate90CCW'))
+  useKey('x', () => tetris.setAction('rotate90CW'))
   useKey('p', () => changeGameMode(), undefined, [
     changeGameMode,
   ])

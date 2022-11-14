@@ -54,10 +54,17 @@ export class Tetris {
   }
 
   /**
-   * テトリスのメインループ処理
-   * @param action 操作内容
+   * ループ内で実行されるアクションの種類を設定する
+   * @param action
    */
-  mainLoop(action?: Action): void {
+  setAction(action?: Action): void {
+    this._gameState.action = action
+  }
+
+  /**
+   * テトリスのメインループ処理
+   */
+  mainLoop(): void {
     if (this.gameState.isGameOver) {
       return
     }
@@ -86,7 +93,7 @@ export class Tetris {
         }
       }
     } else {
-      this.action(action)
+      this.action(this._gameState.action)
     }
     // セルの削除
     this.deleteCells()
@@ -94,6 +101,8 @@ export class Tetris {
     this.updateCells()
     // ゲームオーバーの判定
     this.checkCellsOverFlow()
+    // アクションのリセット
+    this.setAction(undefined)
 
     this._count++
   }
