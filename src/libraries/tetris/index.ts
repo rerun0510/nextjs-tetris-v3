@@ -55,7 +55,7 @@ export class Tetris {
 
   /**
    * ループ内で実行されるアクションの種類を設定する
-   * @param action
+   * @param action 実行するアクション
    */
   setAction(action?: Action): void {
     this._gameState.action = action

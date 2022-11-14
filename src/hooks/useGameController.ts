@@ -12,7 +12,9 @@ export const useGameController = () => {
   )
   const [isActive, setIsActive] = useState(false)
 
-  // テトリスのメインループ処理を実行
+  /**
+   * テトリスのメインループ処理を実行
+   */
   const mainLoop = () => {
     if (!isActive) {
       return
@@ -21,11 +23,14 @@ export const useGameController = () => {
     setGameState(tetris.gameState)
   }
 
-  //   一定間隔でmainLoopを実行
+  // 一定間隔でmainLoopを実行
   useInterval({
     onUpdate: mainLoop,
   })
 
+  /**
+   * Start/Pauseの切り替え
+   */
   const changeGameMode = () => {
     if (gameState.isGameOver) {
       // ゲームのリセット処理
