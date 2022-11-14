@@ -12,6 +12,10 @@ type Props = {
   changeGameMode: () => void
 }
 
+/**
+ * ゲームの開始・停止を制御するボタン
+ * フォーカスが当たらないでほしいため、Buttonコンポーネントを未使用
+ */
 export const GameModeButton: FC<Props> = memo(
   function GameModeButton({
     isGameOver,
