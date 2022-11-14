@@ -1,15 +1,12 @@
 /**
  * 配列の要素をシャッフルする
  */
-export const shuffleArray = ([...array]): [] => {
-  const cloneArray = [...array]
-
-  const result = cloneArray.reduce((_, cur, idx) => {
-    const rand = Math.floor(Math.random() * (idx + 1))
-    cloneArray[idx] = cloneArray[rand]
-    cloneArray[rand] = cur
-    return cloneArray
-  })
-
-  return result
+export const shuffleArray = ([...array]) => {
+  for (let i = array.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const tmp = array[i]
+    array[i] = array[j]
+    array[j] = tmp
+  }
+  return array
 }

@@ -6,10 +6,12 @@ import {
   HStack,
 } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 
 import { useCounter as _useCounter } from '@/hooks/useCounter'
 
 import { Counter } from '@/libraries/counter'
+import { shuffleArray } from '@/libraries/tetris/utils'
 
 // DIに関する参考記事
 // https://blog.logrocket.com/dependency-injection-react/
@@ -25,6 +27,17 @@ export default function CounterPage({
 }: Props) {
   const router = useRouter()
   const [states, actions] = useCounter(counter)
+  const [array, setArray] = useState([
+    '1 ',
+    '2 ',
+    '3 ',
+    '4 ',
+    '5 ',
+    '6 ',
+    '7 ',
+    '8 ',
+    '9 ',
+  ])
 
   return (
     <Center h="100vh">
@@ -37,9 +50,18 @@ export default function CounterPage({
           <Button onClick={() => actions.reset()}>
             reset
           </Button>
+          <Button onClick={() => actions.reset()}>
+            reset
+          </Button>
         </HStack>
         <Button onClick={() => router.push('/')}>
           HomePage
+        </Button>
+        <Text pt="20px">{array}</Text>
+        <Button
+          onClick={() => setArray(shuffleArray(array))}
+        >
+          shuffleArray
         </Button>
       </VStack>
     </Center>
