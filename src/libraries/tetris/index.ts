@@ -62,7 +62,13 @@ export class Tetris {
       return
     }
 
-    if (this._count % 120 === 0) {
+    // レベル14以降の速度は一定
+    const speed =
+      this._gameState.level === 15
+        ? 10
+        : 150 - this._gameState.level * 10
+
+    if (this._count % speed === 0) {
       // 操作中のミノが落下完了するまでの最短距離を算出
       const distance = this.calculateDistance()
       if (distance) {
