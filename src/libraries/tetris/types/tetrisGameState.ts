@@ -16,4 +16,6 @@ export type TetrisGameState = {
   lineCount: number
   /** ゲームのレベル */
   level: number
+  /** ゲームオーバー */
+  isGameOver: boolean
 }

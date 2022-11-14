@@ -13,6 +13,36 @@ export const useGameController = () => {
     tetris.gameState
   )
   const [action, setAction] = useState<Action>()
+  const [isActive, setIsActive] = useState(false)
+
+  // テトリスのメインループ処理を実行
+  const mainLoop = useCallback(() => {
+    if (!isActive) {
+      return
+    }
+    tetris.mainLoop(action)
+    // キーボードイベンドのリセット
+    setAction(undefined)
+    setGameState(tetris.gameState)
+  }, [action, isActive])
+
+  //   一定間隔でmainLoopを実行
+  useInterval({
+    onUpdate: mainLoop,
+  })
+
+  const changeGameMode = () => {
+    if (gameState.isGameOver) {
+      // ゲームのリセット処理
+      tetris.gameReset()
+      setGameState(tetris.gameState)
+      setIsActive(false)
+    } else {
+      console.log('active')
+      setIsActive(!isActive)
+    }
+    setAction(undefined)
+  }
 
   // キーボードイベントの取得
   useKey('ArrowLeft', () => setAction('left'))
@@ -23,19 +53,9 @@ export const useGameController = () => {
   useKey(' ', () => setAction('hardDrop'))
   useKey('z', () => setAction('rotate90CCW'))
   useKey('x', () => setAction('rotate90CW'))
+  useKey('p', () => changeGameMode(), undefined, [
+    changeGameMode,
+  ])
 
-  // テトリスのメインループ処理を実行
-  const mainLoop = useCallback(() => {
-    tetris.mainLoop(action)
-    // キーボードイベンドのリセット
-    setAction(undefined)
-    setGameState(tetris.gameState)
-  }, [action])
-
-  //   一定間隔でmainLoopを実行
-  useInterval({
-    onUpdate: mainLoop,
-  })
-
-  return { gameState, setAction }
+  return { gameState, isActive, changeGameMode }
 }

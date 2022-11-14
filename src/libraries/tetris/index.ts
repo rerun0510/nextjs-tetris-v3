@@ -41,6 +41,7 @@ export class Tetris {
       holdMino: 'none',
       lineCount: 0,
       level: 1,
+      isGameOver: false,
     }
     this._currentMino = {
       ...CURRENT_MINO_TEMPLATE,
@@ -57,6 +58,10 @@ export class Tetris {
    * @param action 操作内容
    */
   mainLoop(action?: Action): void {
+    if (this.gameState.isGameOver) {
+      return
+    }
+
     if (this._count % 120 === 0) {
       // 操作中のミノが落下完了するまでの最短距離を算出
       const distance = this.calculateDistance()
@@ -74,8 +79,31 @@ export class Tetris {
     this.deleteCells()
     // セルを更新
     this.updateCells()
+    // ゲームオーバーの判定
+    this.checkCellsOverFlow()
 
     this._count++
+  }
+
+  /**
+   * ゲームの状態をリセットする
+   */
+  gameReset() {
+    this._gameState = {
+      cells: _.cloneDeep(createEmptyCells()),
+      nextMinos: _.cloneDeep(createNextMinos()),
+      holdMino: 'none',
+      lineCount: 0,
+      level: 1,
+      isGameOver: false,
+    }
+    this._currentMino = {
+      ...CURRENT_MINO_TEMPLATE,
+      mino: this.popNextMino(),
+    }
+    this._count = 0
+    /** 固定されたミノの配置を表す多次元配列 */
+    this._fixedCells = _.cloneDeep(createEmptyCells())
   }
 
   /**
@@ -112,6 +140,21 @@ export class Tetris {
       ...CURRENT_MINO_TEMPLATE,
       mino: this.popNextMino(),
       pointY: MINO_INIT_POSITION_Y,
+    }
+  }
+
+  /**
+   * ゲームオーバーの判定を行う
+   */
+  private checkCellsOverFlow() {
+    for (
+      let i = FIELD_WALL_THICKNESS;
+      i < FIELD_WIDTH - FIELD_WALL_THICKNESS;
+      i++
+    ) {
+      if (this._fixedCells[1][i].isFixed) {
+        this.gameState.isGameOver = true
+      }
     }
   }
 
@@ -172,7 +215,9 @@ export class Tetris {
     }
   }
 
-  /** 時計回り・反時計回り */
+  /**
+   * 時計回り・反時計回り
+   */
   private actionRotate90(action: ActionRotate) {
     const { pointX, pointY, mino, deg } = this._currentMino
     const { points } = minos[mino]
