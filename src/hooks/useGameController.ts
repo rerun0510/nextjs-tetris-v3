@@ -38,7 +38,6 @@ export const useGameController = () => {
       setGameState(tetris.gameState)
       setIsActive(false)
     } else {
-      console.log('active')
       setIsActive(!isActive)
     }
     setAction(undefined)
