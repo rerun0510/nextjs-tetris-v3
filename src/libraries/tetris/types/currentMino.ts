@@ -8,4 +8,5 @@ export type CurrentMino = {
   mino: Mino
   deg: Deg
   canHold: boolean
+  isFixed: boolean
 }

@@ -72,11 +72,18 @@ export class Tetris {
       // 操作中のミノが落下完了するまでの最短距離を算出
       const distance = this.calculateDistance()
       if (distance) {
+        // 次回も落下可能
+        this._currentMino.isFixed = false
         // 落下処理
         this.drop()
       } else {
-        // ミノを固定し、新しいミノを排出する
-        this.fix()
+        if (this._currentMino.isFixed) {
+          // ミノを固定し、新しいミノを排出する
+          this.fix()
+        } else {
+          // 次回の落下時に固定される
+          this._currentMino.isFixed = true
+        }
       }
     } else {
       this.action(action)
@@ -171,10 +178,12 @@ export class Tetris {
     switch (action) {
       case 'right':
       case 'left':
+        this.infinity()
         this.actionHorizontal(action)
         break
       case 'rotate90CW':
       case 'rotate90CCW':
+        this.infinity()
         this.actionRotate90(action)
         break
       case 'hardDrop':
@@ -258,6 +267,16 @@ export class Tetris {
     this._currentMino = {
       ...this._currentMino,
       deg: newDeg,
+    }
+  }
+
+  /**
+   * ミノの固定直前の移動・回転はカウンターをリセットすることで
+   * 無限に移動・回転をすることが可能
+   */
+  private infinity() {
+    if (this._currentMino.isFixed) {
+      this._count = 0
     }
   }
 
