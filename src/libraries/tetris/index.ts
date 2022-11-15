@@ -7,6 +7,8 @@ import {
   FIELD_WIDTH,
   MINO_INIT_POSITION_Y,
   OPERABLE_FIELD_WIDTH,
+  SRS_OFFSETS,
+  SRS_OFFSETS_I,
 } from './constants'
 import { Mino, minos } from './enums'
 import {
@@ -14,6 +16,8 @@ import {
   ActionHorizontal,
   ActionRotate,
   Cell,
+  Deg,
+  MinoOffsetPoint,
   TetrisGameState,
 } from './types'
 import { CurrentMino } from './types/currentMino'
@@ -240,43 +244,94 @@ export class Tetris {
 
   /**
    * 時計回り・反時計回り
+   * {@link https://tetris.wiki/Super_Rotation_System#Wall_Kicks}
    */
   private actionRotate90(action: ActionRotate) {
     const { pointX, pointY, mino, deg } = this._currentMino
     const { points } = minos[mino]
-    // 回転後の角度を算出
-    // TODO: いい感じのロジックに変えたい
-    let newDeg = deg
-    switch (newDeg) {
-      case 0:
-        newDeg = action === 'rotate90CW' ? 90 : 270
-        break
-      case 90:
-        newDeg = action === 'rotate90CW' ? 180 : 0
-        break
-      case 180:
-        newDeg = action === 'rotate90CW' ? 270 : 90
-        break
-      case 270:
-        newDeg = action === 'rotate90CW' ? 0 : 180
-        break
+
+    // Oミノの場合は回転不要
+    if (mino === 'o') {
+      return
     }
-    // 回転後の状態を確認
+
+    // 補正値の取得
+    let offsets: MinoOffsetPoint[]
+    if (mino === 'i') {
+      offsets = SRS_OFFSETS_I[deg][action]
+    } else {
+      offsets = SRS_OFFSETS[deg][action]
+    }
+
+    // 回転後の角度を算出
+    const newDeg = this.calculateDeg(deg, action)
+    // 回転後のミノの形状を取得
     const point = points[newDeg]
+
+    // 5種類の補正値を順番に検証し、回転を行う
+    for (let i = 0; i < offsets.length; i++) {
+      const offset = offsets[i]
+      if (
+        this.checkRotate(
+          point,
+          pointX + offset.pointX,
+          pointY + offset.pointY
+        )
+      ) {
+        this._currentMino = {
+          ...this._currentMino,
+          deg: newDeg,
+          pointX: pointX + offset.pointX,
+          pointY: pointY + offset.pointY,
+        }
+        return
+      }
+    }
+  }
+
+  /**
+   * 回転後の角度を算出
+   * @param deg 回転前の角度
+   * @param action 回転方向
+   * @returns 回転後の角度
+   */
+  private calculateDeg(deg: Deg, action: ActionRotate) {
+    // TODO: いい感じのロジックに変えたい
+    switch (deg) {
+      case 0:
+        return action === 'rotate90CW' ? 90 : 270
+      case 90:
+        return action === 'rotate90CW' ? 180 : 0
+      case 180:
+        return action === 'rotate90CW' ? 270 : 90
+      case 270:
+        return action === 'rotate90CW' ? 0 : 180
+    }
+  }
+
+  /**
+   * 回転の可不可を確認
+   * @param point ミノの形状
+   * @param pointX ミノの位置(X軸)
+   * @param pointY ミノの位置(Y軸)
+   * @returns true:回転可能、false:回転不可能
+   */
+  private checkRotate(
+    point: number[][],
+    pointX: number,
+    pointY: number
+  ): boolean {
     for (let i = 0; i < point.length; i++) {
       for (let j = 0; j < point[i].length; j++) {
         if (
           point[i][j] &&
           this._fixedCells[i + pointY][j + pointX].isFixed
         ) {
-          return
+          return false
         }
       }
     }
-    this._currentMino = {
-      ...this._currentMino,
-      deg: newDeg,
-    }
+    return true
   }
 
   /**

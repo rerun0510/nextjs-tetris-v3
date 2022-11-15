@@ -7,7 +7,7 @@ export const OPERABLE_FIELD_WIDTH = 10
 export const OPERABLE_FIELD_HEIGHT = 20
 
 /** 非干渉領域 */
-export const FIELD_WALL_THICKNESS = 2
+export const FIELD_WALL_THICKNESS = 3
 
 /**
  * フィールド全体の幅
