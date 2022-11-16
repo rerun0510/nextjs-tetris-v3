@@ -53,7 +53,10 @@ export class Tetris {
     }
   }
 
-  get gameState(): TetrisGameState {
+  /**
+   * GameStateのgetter
+   */
+  public get gameState(): TetrisGameState {
     return this._gameState
   }
 
@@ -61,14 +64,14 @@ export class Tetris {
    * ループ内で実行されるアクションの種類を設定する
    * @param action 実行するアクション
    */
-  setAction(action?: Action): void {
+  public setAction(action?: Action): void {
     this._gameState.action = action
   }
 
   /**
    * テトリスのメインループ処理
    */
-  mainLoop(): void {
+  public mainLoop(): void {
     if (this.gameState.isGameOver) {
       return
     }
@@ -114,7 +117,7 @@ export class Tetris {
   /**
    * ゲームの状態をリセットする
    */
-  gameReset() {
+  public gameReset() {
     this._gameState = {
       cells: _.cloneDeep(createEmptyCells()),
       nextMinos: _.cloneDeep(createNextMinos()),
